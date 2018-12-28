@@ -1,0 +1,143 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.terradue.jclouds4one.labs</groupId>
+  <artifactId>abiquo</artifactId>
+  <version>0.1-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>abiquo</name>
+  <url>http://maven.apache.org</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <!--
+     | logging stuff
+    -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.6</version>
+    </dependency>
+    
+    <!--
+     | jclouds
+    -->
+    
+    <dependency>
+      <groupId>org.jclouds</groupId>
+      <artifactId>jclouds-all</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jclouds.labs</groupId>
+      <artifactId>abiquo</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+    
+    <!--
+     | CLI parser
+    -->
+    <dependency>
+      <groupId>com.beust</groupId>
+      <artifactId>jcommander</artifactId>
+      <version>1.29</version>
+    </dependency>
+    
+    <!--
+     | Dependency Injection
+    -->
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+      <version>3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.99soft.guice</groupId>
+      <artifactId>rocoto</artifactId>
+      <version>6.1</version>
+    </dependency>
+    
+  </dependencies>
+  
+  <build>
+    <resources>
+      <resource>
+        <directory>${basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>appassembler-maven-plugin</artifactId>
+        <version>1.1.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>assemble</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <repositoryLayout>flat</repositoryLayout>
+          <repositoryName>lib</repositoryName>
+          <extraJvmArguments>-Dproject.name=${project.name} -Dproject.version=${project.version} -Xms500m -Xmx500m -XX:PermSize=128m -XX:-UseGCOverheadLimit</extraJvmArguments>
+          <programs>
+            <program>
+              <mainClass>com.terradue.jclouds4one.labs.abiquo.CreateVirtualMachine</mainClass>
+              <name>abiquo-node-create</name>
+            </program>
+            <program>
+              <mainClass>com.terradue.jclouds4one.labs.abiquo.DestroyVirtualMachine</mainClass>
+              <name>abiquo-node-destroy</name>
+            </program>
+            <program>
+              <mainClass>com.terradue.jclouds4one.labs.abiquo.RebootVirtualMachine</mainClass>
+              <name>abiquo-node-reboot</name>
+            </program>
+            <program>
+              <mainClass>com.terradue.jclouds4one.labs.abiquo.DescribeVirtualMachine</mainClass>
+              <name>abiquo-node-info</name>
+            </program>
+            </programs>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <attach>true</attach>
+          <tarLongFileMode>gnu</tarLongFileMode>
+          <appendAssemblyId>true</appendAssemblyId>
+          <descriptors>
+            <descriptor>${basedir}/src/main/assembly/bin.xml</descriptor>
+            <descriptor>${basedir}/src/main/assembly/src.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
